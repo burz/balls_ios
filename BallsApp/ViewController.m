@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 
+NSString *const ios_url = @"http://www.ballsapp.com/ios/";
+
 @interface ViewController ()
 
 @end
@@ -16,10 +18,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    NSString *fullURL = @"http://www.ballsapp.com";
-    NSURL *url = [NSURL URLWithString:fullURL];
-    NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
-    [_webView loadRequest:requestObj];
+    NSURL *url = [NSURL URLWithString:ios_url];
+    NSURLRequest *request_obj = [NSURLRequest requestWithURL:url];
+    [_webView loadRequest:request_obj];
 }
 
 - (void)didReceiveMemoryWarning {
