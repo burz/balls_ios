@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B3927F11ADCCEEB005731C5 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B3927F01ADCCEEB005731C5 /* MessageUI.framework */; };
+		4B3927F41ADCD038005731C5 /* MessageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B3927F31ADCD038005731C5 /* MessageController.m */; };
 		4B4695D91ACC3ED200E2A2B9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B4695D81ACC3ED200E2A2B9 /* main.m */; };
 		4B4695DC1ACC3ED200E2A2B9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B4695DB1ACC3ED200E2A2B9 /* AppDelegate.m */; };
 		4B4695DF1ACC3ED200E2A2B9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B4695DE1ACC3ED200E2A2B9 /* ViewController.m */; };
@@ -27,6 +29,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4B3927F01ADCCEEB005731C5 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		4B3927F21ADCD038005731C5 /* MessageController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageController.h; sourceTree = "<group>"; };
+		4B3927F31ADCD038005731C5 /* MessageController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageController.m; sourceTree = "<group>"; };
 		4B4695D31ACC3ED200E2A2B9 /* BallsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BallsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B4695D71ACC3ED200E2A2B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B4695D81ACC3ED200E2A2B9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -47,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B3927F11ADCCEEB005731C5 /* MessageUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +69,7 @@
 		4B4695CA1ACC3ED200E2A2B9 = {
 			isa = PBXGroup;
 			children = (
+				4B3927F01ADCCEEB005731C5 /* MessageUI.framework */,
 				4B4695D51ACC3ED200E2A2B9 /* BallsApp */,
 				4B4695EF1ACC3ED200E2A2B9 /* BallsAppTests */,
 				4B4695D41ACC3ED200E2A2B9 /* Products */,
@@ -89,6 +96,8 @@
 				4B4695E31ACC3ED200E2A2B9 /* Images.xcassets */,
 				4B4695E51ACC3ED200E2A2B9 /* LaunchScreen.xib */,
 				4B4695D61ACC3ED200E2A2B9 /* Supporting Files */,
+				4B3927F21ADCD038005731C5 /* MessageController.h */,
+				4B3927F31ADCD038005731C5 /* MessageController.m */,
 			);
 			path = BallsApp;
 			sourceTree = "<group>";
@@ -223,6 +232,7 @@
 				4B4695DF1ACC3ED200E2A2B9 /* ViewController.m in Sources */,
 				4B4695DC1ACC3ED200E2A2B9 /* AppDelegate.m in Sources */,
 				4B4695D91ACC3ED200E2A2B9 /* main.m in Sources */,
+				4B3927F41ADCD038005731C5 /* MessageController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

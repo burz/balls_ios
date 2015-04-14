@@ -31,7 +31,7 @@
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
                     <connections>
-                        <outlet property="webView" destination="NfE-2V-Kd6" id="r9e-24-q1K"/>
+                        <outlet property="web_view" destination="NfE-2V-Kd6" id="P1P-qM-2st"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
