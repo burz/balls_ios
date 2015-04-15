@@ -75,6 +75,43 @@ NSString *const contact_permission_error = @"This app requires access to your co
     });
 }
 
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller
+                 didFinishWithResult:(MessageComposeResult)result {
+    switch (result) {
+        case MessageComposeResultCancelled:
+            break;
+        case MessageComposeResultFailed:
+        {
+            UIAlertView *warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to send SMS!" delegate:nil                              cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [warningAlert show];
+            break;
+        }
+        case MessageComposeResultSent:
+            break;
+        default:
+            break;
+    }
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)sendInvites:(NSString *)number
+        league_name:(NSString *)league_name
+        invite_path:(NSString *)invite_path {
+    if(![MFMessageComposeViewController canSendText]) {
+        UIAlertView *warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Your device doesn't support SMS!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [warningAlert show];
+        return;
+    }
+    NSArray *recipents = @[number];
+    NSString *message =
+        [NSString stringWithFormat:@"Hey! Come play beer pong with me in my league \"%@\" in BallsApp! Join here: %@", league_name, invite_path];
+    MFMessageComposeViewController *messageController = [[MFMessageComposeViewController alloc] init];
+    messageController.messageComposeDelegate = self;
+    [messageController setRecipients:recipents];
+    [messageController setBody:message];
+    [self presentViewController:messageController animated:YES completion:nil];
+}
+
 - (BOOL)webView:(UIWebView *)webView
         shouldStartLoadWithRequest:(NSURLRequest *)request
         navigationType:(UIWebViewNavigationType)navigationType {
@@ -85,7 +122,18 @@ NSString *const contact_permission_error = @"This app requires access to your co
     if([action_type isEqualToString:get_contacts_action_type]) {
         [self getContacts];
     } else if([action_type isEqualToString:send_invite_action_type]) {
-        NSLog(@"SendInvite");
+        NSString *json_string = [request.URL.fragment stringByReplacingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+        NSError *json_error;
+        NSData *object_data = [json_string dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary *json_object = [NSJSONSerialization JSONObjectWithData:object_data
+                                                                    options:NSJSONReadingMutableContainers
+                                                                      error:&json_error];
+        if(json_error) {
+            UIAlertView *warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to communicate with the server." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [warningAlert show];
+            return NO;
+        }
+        [self sendInvites:[json_object objectForKey:@"number"] league_name:[json_object objectForKey:@"league_name"] invite_path: [json_object objectForKey:@"invite_path"]];
     }
     return NO;
 }

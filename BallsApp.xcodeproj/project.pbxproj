@@ -3,12 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 47;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		4B3927F11ADCCEEB005731C5 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B3927F01ADCCEEB005731C5 /* MessageUI.framework */; };
-		4B3927F41ADCD038005731C5 /* MessageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B3927F31ADCD038005731C5 /* MessageController.m */; };
 		4B4695D91ACC3ED200E2A2B9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B4695D81ACC3ED200E2A2B9 /* main.m */; };
 		4B4695DC1ACC3ED200E2A2B9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B4695DB1ACC3ED200E2A2B9 /* AppDelegate.m */; };
 		4B4695DF1ACC3ED200E2A2B9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B4695DE1ACC3ED200E2A2B9 /* ViewController.m */; };
@@ -30,8 +29,6 @@
 
 /* Begin PBXFileReference section */
 		4B3927F01ADCCEEB005731C5 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
-		4B3927F21ADCD038005731C5 /* MessageController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageController.h; sourceTree = "<group>"; };
-		4B3927F31ADCD038005731C5 /* MessageController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageController.m; sourceTree = "<group>"; };
 		4B4695D31ACC3ED200E2A2B9 /* BallsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BallsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B4695D71ACC3ED200E2A2B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B4695D81ACC3ED200E2A2B9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -96,8 +93,6 @@
 				4B4695E31ACC3ED200E2A2B9 /* Images.xcassets */,
 				4B4695E51ACC3ED200E2A2B9 /* LaunchScreen.xib */,
 				4B4695D61ACC3ED200E2A2B9 /* Supporting Files */,
-				4B3927F21ADCD038005731C5 /* MessageController.h */,
-				4B3927F31ADCD038005731C5 /* MessageController.m */,
 			);
 			path = BallsApp;
 			sourceTree = "<group>";
@@ -173,7 +168,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0620;
-				ORGANIZATIONNAME = "Anthony Burzillo";
+				ORGANIZATIONNAME = BallsApp;
 				TargetAttributes = {
 					4B4695D21ACC3ED200E2A2B9 = {
 						CreatedOnToolsVersion = 6.2;
@@ -186,7 +181,7 @@
 				};
 			};
 			buildConfigurationList = 4B4695CE1ACC3ED200E2A2B9 /* Build configuration list for PBXProject "BallsApp" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 6.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -232,7 +227,6 @@
 				4B4695DF1ACC3ED200E2A2B9 /* ViewController.m in Sources */,
 				4B4695DC1ACC3ED200E2A2B9 /* AppDelegate.m in Sources */,
 				4B4695D91ACC3ED200E2A2B9 /* main.m in Sources */,
-				4B3927F41ADCD038005731C5 /* MessageController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -362,6 +356,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -375,6 +370,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
