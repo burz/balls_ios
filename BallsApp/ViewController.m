@@ -11,37 +11,39 @@
 #import <AddressBook/AddressBook.h>
 #import <MessageUI/MessageUI.h>
 
-NSString *const ios_url = @"http://www.ballsapp.com/ios/";
-NSString *const ballsapp_scheme = @"ballsapp";
-NSString *const get_contacts_action_type = @"GetContacts";
-NSString *const send_invite_action_type = @"SendInvite";
-NSString *const contact_permission_error = @"This app requires access to your contacts to function properly. Please visit to the \"Privacy\" section in the iPhone Settings app.";
+NSString* const ios_url = @"http://www.ballsapp.com/ios/";
+NSString* const ballsapp_scheme = @"ballsapp";
+NSString* const get_contacts_action_type = @"GetContacts";
+NSString* const send_invite_action_type = @"SendInvite";
+NSString* const send_invites_action_type = @"SendInvites";
+NSString* const contact_permission_error = @"This app requires access to your contacts to function properly. Please visit to the \"Privacy\" section in the iPhone Settings app.";
 
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     [_web_view setDelegate:self];
-    NSURL *url = [NSURL URLWithString:ios_url];
-    NSURLRequest *request_obj = [NSURLRequest requestWithURL:url];
+    NSURL* url = [NSURL URLWithString:ios_url];
+    NSURLRequest* request_obj = [NSURLRequest requestWithURL:url];
     [_web_view loadRequest:request_obj];
+    invite_queue = [NSMutableArray array];
 }
 
 - (void)listPeopleInAddressBook:(ABAddressBookRef)addressBook
 {
-    NSArray *allPeople = CFBridgingRelease(ABAddressBookCopyArrayOfAllPeople(addressBook));
+    NSArray* allPeople = CFBridgingRelease(ABAddressBookCopyArrayOfAllPeople(addressBook));
     NSInteger numberOfPeople = [allPeople count];
     for(NSInteger i = 0; i < numberOfPeople; i++) {
         ABRecordRef person = (__bridge ABRecordRef)allPeople[i];
         ABMultiValueRef phoneNumbers = ABRecordCopyValue(person, kABPersonPhoneProperty);
         CFIndex numberOfPhoneNumbers = ABMultiValueGetCount(phoneNumbers);
         if(numberOfPhoneNumbers > 0) {
-            NSString *firstName = CFBridgingRelease(ABRecordCopyValue(person, kABPersonFirstNameProperty));
-            NSString *lastName  = CFBridgingRelease(ABRecordCopyValue(person, kABPersonLastNameProperty));
-            NSArray *names = [[NSArray alloc] initWithObjects:firstName, lastName, nil];
-            NSString *name = [names componentsJoinedByString:@" "];
-            NSString *phoneNumber = CFBridgingRelease(ABMultiValueCopyValueAtIndex(phoneNumbers, 0));
-            NSString *request_string = [NSString stringWithFormat:@"add_contact('%@', '%@')", name, phoneNumber];
+            NSString* firstName = CFBridgingRelease(ABRecordCopyValue(person, kABPersonFirstNameProperty));
+            NSString* lastName  = CFBridgingRelease(ABRecordCopyValue(person, kABPersonLastNameProperty));
+            NSArray* names = [[NSArray alloc] initWithObjects:firstName, lastName, nil];
+            NSString* name = [names componentsJoinedByString:@" "];
+            NSString* phoneNumber = CFBridgingRelease(ABMultiValueCopyValueAtIndex(phoneNumbers, 0));
+            NSString* request_string = [NSString stringWithFormat:@"add_contact('%@', '%@')", name, phoneNumber];
             [_web_view performSelectorOnMainThread:@selector(stringByEvaluatingJavaScriptFromString:) withObject:request_string waitUntilDone:YES];
         }
         CFRelease(phoneNumbers);
@@ -79,31 +81,35 @@ NSString *const contact_permission_error = @"This app requires access to your co
                  didFinishWithResult:(MessageComposeResult)result {
     switch (result) {
         case MessageComposeResultCancelled:
+        case MessageComposeResultSent:
+        {
+            if([invite_queue count] > 0) {
+                [self sendInvites];
+            }
             break;
+        }
         case MessageComposeResultFailed:
         {
-            UIAlertView *warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to send SMS!" delegate:nil                              cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            UIAlertView* warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to send SMS!" delegate:nil                              cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [warningAlert show];
             break;
         }
-        case MessageComposeResultSent:
-            break;
         default:
             break;
     }
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)sendInvites:(NSString *)number
+- (void)sendInvite:(NSString *)number
         league_name:(NSString *)league_name
         invite_path:(NSString *)invite_path {
     if(![MFMessageComposeViewController canSendText]) {
-        UIAlertView *warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Your device doesn't support SMS!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView* warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Your device doesn't support SMS!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [warningAlert show];
         return;
     }
-    NSArray *recipents = @[number];
-    NSString *message =
+    NSArray* recipents = @[number];
+    NSString* message =
         [NSString stringWithFormat:@"Hey! Come play beer pong with me in my league \"%@\" in BallsApp! Join here: %@", league_name, invite_path];
     MFMessageComposeViewController *messageController = [[MFMessageComposeViewController alloc] init];
     messageController.messageComposeDelegate = self;
@@ -112,28 +118,54 @@ NSString *const contact_permission_error = @"This app requires access to your co
     [self presentViewController:messageController animated:YES completion:nil];
 }
 
+- (void)sendInvites {
+    if(![MFMessageComposeViewController canSendText]) {
+        UIAlertView* warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Your device doesn't support SMS!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [warningAlert show];
+        return;
+    }
+    if([invite_queue count] > 0) {
+        NSString* invite_json = [invite_queue lastObject];
+        NSError* json_error;
+        NSData* object_data = [invite_json dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary* json_object = [NSJSONSerialization JSONObjectWithData:object_data
+                                                                    options:NSJSONReadingMutableContainers
+                                                                      error:&json_error];
+        if(json_error) {
+            UIAlertView *warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to communicate with the server." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [warningAlert show];
+        }
+        [self sendInvite:[json_object objectForKey:@"number"] league_name:[json_object objectForKey:@"league_name"] invite_path: [json_object objectForKey:@"invite_path"]];
+        [invite_queue removeLastObject];
+    }
+}
+
 - (BOOL)webView:(UIWebView *)webView
         shouldStartLoadWithRequest:(NSURLRequest *)request
         navigationType:(UIWebViewNavigationType)navigationType {
     if(![request.URL.scheme isEqualToString:ballsapp_scheme]) {
         return YES;
     }
-    NSString *action_type = request.URL.host;
+    NSString* action_type = request.URL.host;
     if([action_type isEqualToString:get_contacts_action_type]) {
         [self getContacts];
     } else if([action_type isEqualToString:send_invite_action_type]) {
-        NSString *json_string = [request.URL.fragment stringByReplacingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
-        NSError *json_error;
-        NSData *object_data = [json_string dataUsingEncoding:NSUTF8StringEncoding];
-        NSDictionary *json_object = [NSJSONSerialization JSONObjectWithData:object_data
-                                                                    options:NSJSONReadingMutableContainers
-                                                                      error:&json_error];
+        NSString* json_string = [request.URL.fragment stringByReplacingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+        [invite_queue addObject:json_string];
+        [self sendInvites];
+    } else if([action_type isEqualToString:send_invites_action_type]) {
+        NSString* json_string = [request.URL.fragment stringByReplacingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+        NSError* json_error;
+        NSData* object_data = [json_string dataUsingEncoding:NSUTF8StringEncoding];
+        invite_queue = [NSJSONSerialization JSONObjectWithData:object_data
+                                                       options:NSJSONReadingMutableContainers
+                                                         error:&json_error];
         if(json_error) {
             UIAlertView *warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to communicate with the server." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [warningAlert show];
             return NO;
         }
-        [self sendInvites:[json_object objectForKey:@"number"] league_name:[json_object objectForKey:@"league_name"] invite_path: [json_object objectForKey:@"invite_path"]];
+        [self sendInvites];
     }
     return NO;
 }

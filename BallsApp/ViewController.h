@@ -9,7 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
 
-@interface ViewController : UIViewController <UIWebViewDelegate, MFMessageComposeViewControllerDelegate>
+@interface ViewController : UIViewController <UIWebViewDelegate, MFMessageComposeViewControllerDelegate> {
+    NSMutableArray* invite_queue;
+}
 
 @property (weak, nonatomic) IBOutlet UIWebView *web_view;
 

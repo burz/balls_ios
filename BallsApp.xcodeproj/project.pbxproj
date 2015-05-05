@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 47;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -167,7 +167,7 @@
 		4B4695CB1ACC3ED200E2A2B9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0620;
+				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = BallsApp;
 				TargetAttributes = {
 					4B4695D21ACC3ED200E2A2B9 = {
@@ -181,7 +181,7 @@
 				};
 			};
 			buildConfigurationList = 4B4695CE1ACC3ED200E2A2B9 /* Build configuration list for PBXProject "BallsApp" */;
-			compatibilityVersion = "Xcode 6.3";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
