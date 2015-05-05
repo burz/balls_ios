@@ -172,6 +172,7 @@ NSString* const contact_permission_error = @"This app requires access to your co
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+    [_web_view reload];
 }
 
 @end
