@@ -79,6 +79,7 @@ NSString* const contact_permission_error = @"This app requires access to your co
 
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller
                  didFinishWithResult:(MessageComposeResult)result {
+    [self dismissViewControllerAnimated:YES completion:nil];
     switch (result) {
         case MessageComposeResultCancelled:
         case MessageComposeResultSent:
@@ -97,7 +98,6 @@ NSString* const contact_permission_error = @"This app requires access to your co
         default:
             break;
     }
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)sendInvite:(NSString *)number
@@ -108,33 +108,19 @@ NSString* const contact_permission_error = @"This app requires access to your co
         [warningAlert show];
         return;
     }
-    NSArray* recipents = @[number];
+    NSArray* recipients = @[number];
     NSString* message =
         [NSString stringWithFormat:@"Hey! Come play beer pong with me in my league \"%@\" in BallsApp! Join here: %@", league_name, invite_path];
-    MFMessageComposeViewController *messageController = [[MFMessageComposeViewController alloc] init];
+    MFMessageComposeViewController* messageController = [[MFMessageComposeViewController alloc] init];
     messageController.messageComposeDelegate = self;
-    [messageController setRecipients:recipents];
+    [messageController setRecipients:recipients];
     [messageController setBody:message];
     [self presentViewController:messageController animated:YES completion:nil];
 }
 
 - (void)sendInvites {
-    if(![MFMessageComposeViewController canSendText]) {
-        UIAlertView* warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Your device doesn't support SMS!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [warningAlert show];
-        return;
-    }
     if([invite_queue count] > 0) {
-        NSString* invite_json = [invite_queue lastObject];
-        NSError* json_error;
-        NSData* object_data = [invite_json dataUsingEncoding:NSUTF8StringEncoding];
-        NSDictionary* json_object = [NSJSONSerialization JSONObjectWithData:object_data
-                                                                    options:NSJSONReadingMutableContainers
-                                                                      error:&json_error];
-        if(json_error) {
-            UIAlertView *warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to communicate with the server." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [warningAlert show];
-        }
+        NSDictionary* json_object = [invite_queue lastObject];
         [self sendInvite:[json_object objectForKey:@"number"] league_name:[json_object objectForKey:@"league_name"] invite_path: [json_object objectForKey:@"invite_path"]];
         [invite_queue removeLastObject];
     }
@@ -150,9 +136,17 @@ NSString* const contact_permission_error = @"This app requires access to your co
     if([action_type isEqualToString:get_contacts_action_type]) {
         [self getContacts];
     } else if([action_type isEqualToString:send_invite_action_type]) {
-        NSString* json_string = [request.URL.fragment stringByReplacingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
-        [invite_queue addObject:json_string];
-        [self sendInvites];
+        NSString* invite_json = [request.URL.fragment stringByReplacingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+        NSError* json_error;
+        NSData* object_data = [invite_json dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary* json_object = [NSJSONSerialization JSONObjectWithData:object_data
+                                                                    options:NSJSONReadingMutableContainers
+                                                                      error:&json_error];
+        if(json_error) {
+            UIAlertView *warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to communicate with the server." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [warningAlert show];
+        }
+        [self sendInvite:[json_object objectForKey:@"number"] league_name:[json_object objectForKey:@"league_name"] invite_path: [json_object objectForKey:@"invite_path"]];
     } else if([action_type isEqualToString:send_invites_action_type]) {
         NSString* json_string = [request.URL.fragment stringByReplacingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
         NSError* json_error;
